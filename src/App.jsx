@@ -1,4 +1,5 @@
 import './App.css';
+import styles from './App.module.css';
 import TodoList from './features/TodoList/TodoList';
 import TodoForm from './features/TodoForm';
 import TodosViewForm from './features/TodosViewForm';
@@ -30,7 +31,7 @@ function App() {
       try {
         const resp = await fetch(encodeUrl(), options);
         if (!resp.ok) {
-          throw Error(resp.message);
+          throw Error(resp.status);
         }
         const response = await resp.json();
         const fetchedTodos = response.records.map((record) => {
@@ -46,7 +47,7 @@ function App() {
         setTodoList([...fetchedTodos]);
       } catch (error) {
         console.log(error.message);
-        setErrorMessage(error.message);
+        setErrorMessage(`${error.message}. Unable to fetch todos`);
       } finally {
         setIsLoading(false);
       }
@@ -77,7 +78,7 @@ function App() {
       setIsSaving(true);
       const resp = await fetch(encodeUrl(), options);
       if (!resp.ok) {
-        throw Error(resp.message);
+        throw Error(resp.status);
       }
       const { records } = await resp.json();
       const savedTodo = { id: records[0].id, ...records[0].fields };
@@ -87,7 +88,7 @@ function App() {
       setTodoList([...todoList, savedTodo]);
     } catch (error) {
       console.log(error.message);
-      setErrorMessage(error.message);
+      setErrorMessage(`${error.message}. Unable to add Todo.`);
     } finally {
       setIsSaving(false);
     }
@@ -124,7 +125,7 @@ function App() {
       setTodoList(updatedTodos);
       const resp = await fetch(encodeUrl(), options);
       if (!resp.ok) {
-        throw Error(resp.message);
+        throw Error(resp.status);
       }
     } catch (error) {
       console.log(error.message);
@@ -171,7 +172,7 @@ function App() {
       });
       const resp = await fetch(encodeUrl(), options);
       if (!resp.ok) {
-        throw Error(resp.message);
+        throw Error(resp.status);
       }
 
       setTodoList(updatedTodos);
@@ -191,7 +192,7 @@ function App() {
   };
 
   return (
-    <div>
+    <div className={styles.app}>
       <h1>My Todos</h1>
       <TodoForm onAddTodo={addTodo} isSaving={isSaving} />
       <TodoList
@@ -200,7 +201,7 @@ function App() {
         onUpdateTodo={updateTodo}
         isLoading={isLoading}
       />
-      <hr />
+      <hr className={styles.hr} />
       <TodosViewForm
         sortDirection={sortDirection}
         setSortDirection={setSortDirection}
@@ -209,13 +210,13 @@ function App() {
         queryString={queryString}
         setQueryString={setQueryString}
       />
-      {errorMessage.length !== 0 ? (
-        <div>
+      {errorMessage && (
+        <div className={styles.error}>
           <hr></hr>
           <p>{errorMessage}</p>
-          <button onClick={setErrorMessage('')}>Dismiss</button>
+          <button onClick={() => setErrorMessage('')}>Dismiss</button>
         </div>
-      ) : null}
+      )}
     </div>
   );
 }
