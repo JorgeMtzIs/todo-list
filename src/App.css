@@ -1,1 +1,17 @@
+h1 {
+  font-family: Georgia, 'Times New Roman', Times, serif;
+}
 
+body {
+  background-color: rgb(209, 241, 156);
+}
+
+button,
+select {
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+label,
+p {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}

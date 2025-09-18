@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useEffect } from 'react';
+import TextInputWithLabel from '../shared/TextInputWithLabel';
+import styled from 'styled-components';
 
 function TodosViewForm({
   sortDirection,
@@ -10,9 +12,11 @@ function TodosViewForm({
   setQueryString,
 }) {
   const [localQueryString, setLocalQueryString] = useState(queryString);
+
   function preventRefresh(event) {
     event.preventDefault();
   }
+
   useEffect(() => {
     const debounce = setTimeout(() => {
       setQueryString(localQueryString);
@@ -21,17 +25,21 @@ function TodosViewForm({
       clearTimeout(debounce);
     };
   }, [localQueryString, setQueryString]);
+
+  const StyledSelect = styled.select`
+    margin-left: 5px;
+    margin-right: 5px;
+  `;
   return (
     <form onSubmit={preventRefresh}>
       <div>
-        <label>Search todos:</label>
-        <input
-          type="text"
-          value={localQueryString}
+        <TextInputWithLabel
+          labelText="Search Todos:"
           onChange={(e) => {
             setLocalQueryString(e.target.value);
           }}
-        ></input>
+          value={localQueryString}
+        />
         <button
           type="button"
           onClick={() => {
@@ -43,7 +51,7 @@ function TodosViewForm({
       </div>
       <div>
         <label>Sort by</label>
-        <select
+        <StyledSelect
           onChange={(e) => {
             setSortField(e.target.value);
           }}
@@ -51,9 +59,9 @@ function TodosViewForm({
         >
           <option value="title">Title</option>
           <option value="createdTime">Time added</option>
-        </select>
+        </StyledSelect>
         <label>Direction</label>
-        <select
+        <StyledSelect
           onChange={(e) => {
             setSortDirection(e.target.value);
           }}
@@ -61,7 +69,7 @@ function TodosViewForm({
         >
           <option value="asc">Ascending</option>
           <option value="desc">Descending</option>
-        </select>
+        </StyledSelect>
       </div>
     </form>
   );

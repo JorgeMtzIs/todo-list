@@ -1,0 +1,12 @@
+.app {
+  display: grid;
+  place-content: center;
+}
+
+.hr {
+  width: 100%;
+}
+
+.error {
+  border: solid red;
+}
