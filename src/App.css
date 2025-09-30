@@ -12,6 +12,7 @@ select {
 }
 
 label,
-p {
+p,
+span {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
