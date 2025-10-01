@@ -1,8 +1,10 @@
 import './App.css';
 import styles from './App.module.css';
-import TodoList from './features/TodoList/TodoList';
-import TodoForm from './features/TodoForm';
-import TodosViewForm from './features/TodosViewForm';
+import TodosPage from './pages/TodosPage';
+import Header from './shared/Header';
+import About from './pages/About';
+import NotFound from './pages/NotFound';
+import { Route, Routes, useLocation } from 'react-router';
 import { use, useEffect, useState, useCallback, useReducer } from 'react';
 import {
   reducer as todosReducer,
@@ -17,6 +19,8 @@ function App() {
   const [queryString, setQueryString] = useState('');
   const url = `https://api.airtable.com/v0/${import.meta.env.VITE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
   const token = `Bearer ${import.meta.env.VITE_PAT}`;
+  const location = useLocation();
+  const [title, setTitle] = useState('');
   const encodeUrl = useCallback(() => {
     let searchQuery = '';
     let sortQuery = `sort[0][field]=${sortField}&sort[0][direction]=${sortDirection}`;
@@ -25,6 +29,16 @@ function App() {
     }
     return encodeURI(`${url}?${sortQuery}${searchQuery}`);
   }, [queryString, sortDirection, sortField]);
+
+  useEffect(() => {
+    if (location.pathname === '/') {
+      setTitle('Todo List');
+    } else if (location.pathname === '/about') {
+      setTitle('About');
+    } else {
+      setTitle('Not Found');
+    }
+  }, [location]);
 
   useEffect(() => {
     const fetchTodos = async () => {
@@ -161,23 +175,28 @@ function App() {
 
   return (
     <div className={styles.app}>
-      <h1>My Todos</h1>
-      <TodoForm onAddTodo={addTodo} isSaving={todoState.isSaving} />
-      <TodoList
-        todoList={todoState.todoList}
-        onCompleteTodo={completeTodo}
-        onUpdateTodo={updateTodo}
-        isLoading={todoState.isLoading}
-      />
-      <hr className={styles.hr} />
-      <TodosViewForm
-        sortDirection={sortDirection}
-        setSortDirection={setSortDirection}
-        sortField={sortField}
-        setSortField={setSortField}
-        queryString={queryString}
-        setQueryString={setQueryString}
-      />
+      <Header title={title} />
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <TodosPage
+              todoState={todoState}
+              addTodo={addTodo}
+              completeTodo={completeTodo}
+              updateTodo={updateTodo}
+              sortDirection={sortDirection}
+              setSortDirection={setSortDirection}
+              sortField={sortField}
+              setSortField={setSortField}
+              queryString={queryString}
+              setQueryString={setQueryString}
+            />
+          }
+        />
+        <Route path="/about" element={<About />} />
+        <Route path="/*" element={<NotFound />} />
+      </Routes>
       {todoState.errorMessage && (
         <div className={styles.error}>
           <hr></hr>
